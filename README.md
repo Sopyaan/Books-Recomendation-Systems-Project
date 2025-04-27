@@ -11,21 +11,36 @@ Menyediakan sistem rekomendasi buku yang tepat sasaran dapat meningkatkan pengal
 
 ## Business Understanding
 ### Problem Statements
-- Bagaimana merekomendasikan buku baru yang kemungkinan disukai pengguna berdasarkan histori interaksi mereka dan pengguna lain?
-- Bagaimana mengatasi ketidaksempurnaan data seperti ISBN yang tidak ditemukan?
-- Bagaimana menangani permasalahan data terbatas pada pengguna baru (cold-start)?
+Dalam industri buku yang sangat kompetitif dengan ribuan judul baru diterbitkan setiap tahunnya, pengguna seringkali mengalami kesulitan dalam menemukan buku yang sesuai dengan preferensi dan minat pribadi mereka. Banyaknya pilihan yang tersedia menyebabkan pengguna merasa kewalahan, sehingga membutuhkan bantuan sistem untuk mempersempit pilihan dan menemukan buku yang relevan. Tanpa sistem rekomendasi yang efektif, pengalaman pengguna dapat menurun dan berpotensi mengurangi tingkat pembelian atau keterlibatan pengguna.
   
 ### Goals
 - Mengembangkan dua pendekatan sistem rekomendasi, yaitu **Content-Based Filtering** dan **Collaborative Filtering**.
+- Membantu pengguna menemukan buku baru yang mungkin belum pernah mereka ketahui.
 - Meningkatkan akurasi prediksi rating dan relevansi rekomendasi.
-- Memberikan rekomendasi Top-N buku untuk masing-masing pengguna.
+- Meningkatkan potensi penjualan atau keterlibatan pengguna dengan platform buku.
   
 ### Solution Statements
-- **Content-Based Filtering**:  
-  Menggunakan judul buku (`Book-Title`) untuk menghitung kemiripan antar buku dengan TF-IDF dan Cosine Similarity.
-- **Collaborative Filtering**:  
-  Menggunakan embedding user dan ISBN berbasis TensorFlow (RecommenderNet) untuk memprediksi kemungkinan rating.
+Untuk mencapai tujuan di atas, proyek ini mengusulkan dua pendekatan sistem rekomendasi:
+#### Content-Based Filtering
+Pendekatan ini memberikan rekomendasi berdasarkan kesamaan konten antara buku yang sudah disukai pengguna dan buku lainnya. Sistem akan menganalisis atribut seperti genre, deskripsi, atau penulis untuk menemukan buku serupa dengan preferensi pengguna sebelumnya.
 
+Kelebihan:
+- Tidak memerlukan data pengguna lain, cukup data preferensi pengguna sendiri.
+- Rekomendasi bisa sangat personal.
+
+Kekurangan:
+- Terbatas pada item yang mirip dengan yang sudah dikenal pengguna (kurang eksplorasi konten baru).
+- Tidak dapat merekomendasikan buku di luar preferensi awal pengguna.
+
+#### Collaborative Filtering
+Pendekatan ini memberikan rekomendasi berdasarkan kesamaan perilaku antar pengguna. Sistem akan merekomendasikan buku yang disukai oleh pengguna lain dengan profil atau pola perilaku serupa.
+
+Kelebihan:
+- Dapat menemukan buku-buku baru yang tidak mirip secara langsung dengan preferensi awal pengguna.
+- Lebih fleksibel dan memperluas cakrawala rekomendasi.
+
+Kekurangan:
+- Membutuhkan data interaksi pengguna dalam jumlah besar (seperti rating, review, atau histori pembelian).
 ---
 
 ## Data Understanding
