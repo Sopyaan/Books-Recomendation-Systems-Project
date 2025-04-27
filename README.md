@@ -254,8 +254,7 @@ Evaluasi model recommender system bertujuan untuk mengukur seberapa baik model d
 RMSE mengukur seberapa besar perbedaan antara rating yang diprediksi oleh model dan rating yang sebenarnya diberikan oleh pengguna. RMSE merupakan salah satu metrik utama untuk mengukur kesalahan prediksi model rekomendasi.
 
 Formula:
-
-![Formula RMSE](https://images.app.goo.gl/NS7b8BC1VcCi6bTdA)
+RMSE = √( (1/n) × Σ (y_pred − y_true)² )
 
 
 > Di mana:  
@@ -269,10 +268,7 @@ Formula:
 BCE Loss digunakan karena model ini memperkirakan rating dalam bentuk probabilitas, yang dihitung dengan fungsi sigmoid. Metrik ini mengukur seberapa baik model dalam memprediksi nilai rating pada skala biner (misalnya: apakah pengguna akan menyukai buku atau tidak).
 
 Formula: 
-
-\[
-Binary \ Crossentropy = -\frac{1}{n} \sum_{i=1}^{n} \left( y_{true} \log(y_{pred}) + (1 - y_{true}) \log(1 - y_{pred}) \right)
-\]
+Binary Crossentropy = - (1/n) × Σ [ y_true * log(y_pred) + (1 - y_true) * log(1 - y_pred) ]
 
 > Di mana:  
 > - \( y_{true} \) adalah nilai rating yang sebenarnya (0 atau 1).  
