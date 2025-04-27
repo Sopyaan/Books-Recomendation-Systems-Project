@@ -253,9 +253,7 @@ Evaluasi model recommender system bertujuan untuk mengukur seberapa baik model d
 #### Root Mean Squared Error (RMSE)
 RMSE mengukur seberapa besar perbedaan antara rating yang diprediksi oleh model dan rating yang sebenarnya diberikan oleh pengguna. RMSE merupakan salah satu metrik utama untuk mengukur kesalahan prediksi model rekomendasi.
 
-Formula : \[
-RMSE = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_{pred} - y_{true})^2}
-\]
+Formula : ![alt text](https://www.google.com/imgres?q=rumus%20rmse&imgurl=https%3A%2F%2Fblue.kumparan.com%2Fimage%2Fupload%2Ffl_progressive%2Cfl_lossy%2Cc_fill%2Cq_auto%3Abest%2Cw_640%2Fv1634025439%2F01je7vnn9ae5y7c4a2t4096n9b.png&imgrefurl=https%3A%2F%2Fkumparan.com%2Fberita-hari-ini%2Fcara-menghitung-root-mean-square-error-dengan-microsoft-excel-242S9iz5BQ8&docid=2YDUMHipODJMKM&tbnid=3PAOfjIFfKOdKM&vet=12ahUKEwjSo6eb0PeMAxWq2jgGHUwTAP0QM3oECHEQAA..i&w=640&h=266&hcb=2&ved=2ahUKEwjSo6eb0PeMAxWq2jgGHUwTAP0QM3oECHEQAA?raw=true)
 
 > Di mana:  
 > - \( y_{pred} \) adalah rating yang diprediksi oleh model.  
