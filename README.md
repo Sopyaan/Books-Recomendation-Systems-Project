@@ -148,10 +148,10 @@ Transformasi data melibatkan konversi atau perubahan data ke dalam bentuk yang l
 ## Modeling and Result
 Pada tahap ini, sistem rekomendasi dibangun untuk memberikan rekomendasi buku berdasarkan data rating yang telah disiapkan. Tujuan utama dari modeling adalah untuk mengidentifikasi buku-buku yang relevan bagi pengguna berdasarkan perilaku mereka sebelumnya atau preferensi yang ada dalam dataset. Sistem rekomendasi dapat mengandalkan berbagai algoritma, dan di sini kita akan menjelaskan dua algoritma yang berbeda: Collaborative Filtering dan Content-Based Filtering.
 
-#### Content Based Filtering
+### Content Based Filtering
 Pada tahap ini, saya membangun sistem rekomendasi menggunakan Content-Based Filtering yang berfokus pada kesamaan antara buku-buku berdasarkan judulnya. Berikut adalah langkah-langkah yang telah dilakukan untuk membangun sistem rekomendasi buku dengan menggunakan teknik ini.
 
-##### Mengambil 10.000 Baris Pertama dari Data
+#### Mengambil 10.000 Baris Pertama dari Data
 Untuk mengurangi ukuran dataset yang besar dan mempercepat proses, hanya diambil 10.000 baris pertama dari data yang sudah disiapkan.
 > data_cut = data_new.head(10000)
 
@@ -194,6 +194,103 @@ Berikut hasil rekomendasi dari buku dengan ISBN '0449143600':
 | 4  | 0440147247  | In the Name of Love              | 0           |
 | 5  | 0553275283  | Love Story                      | 8           |
 
+---
+### Collaborative Filtering
+Collaborative Filtering berbasis model neural network digunakan untuk membuat sistem rekomendasi buku. Proses ini melibatkan pengkodean ID pengguna dan ISBN, normalisasi rating, pembagian data ke dalam set pelatihan dan validasi, serta pelatihan model dengan menggunakan teknik deep learning.
+
+Model ini bekerja dengan mengidentifikasi buku yang mirip dan tidak pernah dibeli pengguna dengan pertimbangan rating yang telah diberikan sebelumnya. Model ini menjadi solusi dalam menghasilkan sistem rekomendasi yang efektif dan efisien karena mempertimbangkan preferensi pengguna dan hanya hitungan detik dalam memberikan rekomendasi. Adapun langkah-langkah yang dilakukan sebagai berikut:
+
+#### Encoding User dan ISBN
+> Saya membuat pemetaan antara ID pengguna (User-ID) dan ISBN buku (ISBN) menjadi ID yang lebih sederhana untuk digunakan dalam model neural network.
+
+#### Normalisasi Rating
+> Rating dinormalisasi ke skala antara 0 dan 1, agar lebih konsisten dalam prediksi.
+
+#### Pembagian Data untuk Pelatihan dan Validasi
+> Data dibagi menjadi set pelatihan (80%) dan set validasi (20%) untuk melatih dan menguji model.
+
+#### Model RecommenderNet
+> Model neural network (RecommenderNet) menggunakan Embedding layers untuk pengguna dan buku. Model ini memprediksi rating yang diberikan oleh pengguna untuk buku tertentu.
+
+#### Pelatihan Model
+> Model dilatih dengan menggunakan loss function BinaryCrossentropy dan metrik RootMeanSquaredError untuk menilai seberapa baik model dalam memprediksi rating.
+
+#### Menyajikan Top-N Recommendation
+Setelah model selesai dilatih, model dapat memberikan rekomendasi buku berdasarkan prediksi rating yang diberikan oleh pengguna terhadap buku yang belum mereka beri rating. Berikut cara kerja dari proses ini:
+- Model memilih secara acak user_id dari dataset rating. Kemudian, model mengambil data buku yang sudah pernah dikunjungi oleh pengguna tersebut.
+- Model mengidentifikasi buku yang belum pernah dilihat oleh pengguna tersebut dengan memfilter buku berdasarkan ISBN yang belum ada di data rating pengguna.
+- Untuk setiap buku yang belum dilihat oleh pengguna, model memprediksi rating yang mungkin diberikan oleh pengguna menggunakan model yang telah dilatih.
+- Rating prediksi dihitung dengan cara menggabungkan embedding dari pengguna dan buku, serta bias masing-masing.
+- Setelah mendapatkan prediksi rating untuk semua buku yang belum dilihat, model memilih 10 buku dengan rating tertinggi untuk diberikan sebagai rekomendasi kepada pengguna.
+- Buku-buku yang memiliki rating tertinggi oleh pengguna ditampilkan untuk memberi konteks mengenai preferensi pengguna.
+
+Buku dengan Rating Tinggi dari User **278148**:
+| No | Judul Buku                                       | Rating |
+|----|--------------------------------------------------|--------|
+| 1  | Arthur Conan Doyle: A Life                      | 10     |
+| 2  | Expression of the Emotions In Man and Anim       | 10     |
+
+---
+Top 10 Rekomendasi Buku untuk User 278148:
+| No | Judul Buku                                                            |
+|----|-----------------------------------------------------------------------|
+| 1  | The Watsons Go to Birmingham - 1963 (Yearling Newbery)                |
+| 2  | Into the Wild                                                         |
+| 3  | Tender at the Bone: Growing Up at the Table                           |
+| 4  | Lord of the Flies                                                      |
+| 5  | Julia's Last Hope (Oke, Janette, Women of the West.)                  |
+| 6  | Night over Water                                                       |
+| 7  | Die Wiederkehr Des Königs III                                          |
+| 8  | Oceano Mare                                                            |
+| 9  | Carolina Moon                                                          |
+| 10 | Bias: A CBS Insider Exposes How the Media Distort the News             |
+
+---
+## Evaluation
+Evaluasi model recommender system bertujuan untuk mengukur seberapa baik model dalam memberikan rekomendasi yang relevan dan akurat sesuai dengan preferensi pengguna. Dalam proyek ini, evaluasi dilakukan menggunakan beberapa metrik yang relevan untuk konteks data dan tujuan model, yang berupa sistem rekomendasi buku.
+
+### Metrik Evaluasi yang Digunakan
+#### Root Mean Squared Error (RMSE)
+RMSE mengukur seberapa besar perbedaan antara rating yang diprediksi oleh model dan rating yang sebenarnya diberikan oleh pengguna. RMSE merupakan salah satu metrik utama untuk mengukur kesalahan prediksi model rekomendasi.
+
+Formula : \[
+RMSE = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_{pred} - y_{true})^2}
+\]
+
+> Di mana:  
+> - \( y_{pred} \) adalah rating yang diprediksi oleh model.  
+> - \( y_{true} \) adalah rating aktual yang diberikan oleh pengguna.  
+> - \( n \) adalah jumlah data yang dievaluasi.  
+
+> Cara kerja: Metrik ini dihitung dengan cara mencari rata-rata kuadrat selisih antara rating yang diprediksi dan rating yang sebenarnya, kemudian mengambil akar kuadratnya. Semakin kecil nilai RMSE, semakin akurat prediksi model.
+
+#### Binary Crossentropy Loss (BCE Loss)
+BCE Loss digunakan karena model ini memperkirakan rating dalam bentuk probabilitas, yang dihitung dengan fungsi sigmoid. Metrik ini mengukur seberapa baik model dalam memprediksi nilai rating pada skala biner (misalnya: apakah pengguna akan menyukai buku atau tidak).
+
+Formula: \[
+Binary \ Crossentropy = -\frac{1}{n} \sum_{i=1}^{n} \left( y_{true} \log(y_{pred}) + (1 - y_{true}) \log(1 - y_{pred}) \right)
+\]
+
+> Di mana:  
+> - \( y_{true} \) adalah nilai rating yang sebenarnya (0 atau 1).  
+> - \( y_{pred} \) adalah nilai probabilitas yang diprediksi oleh model.
+
+> Cara kerja: Binary crossentropy menghitung perbedaan antara nilai probabilitas yang diprediksi oleh model dan label aktual. Nilai loss yang lebih kecil menunjukkan bahwa model lebih baik dalam memperkirakan kemungkinan rating yang benar.
+
+#### Hasil Proyek Berdasarkan Metrik Evaluasi
+
+Pada hasil pelatihan model, kita memperoleh nilai berikut:
+
+| Metrik                 | Nilai  |
+|------------------------|--------|
+| **Loss**              | 0.2057 |
+| **Root Mean Squared Error (RMSE)** | 0.1500 |
+| **Validation Loss**   | 0.4322 |
+| **Validation RMSE**   | 0.3108 |
+
+---
+
+Semakin kecil nilai RMSE dan loss, semakin baik model dalam memberikan rekomendasi yang akurat dan sesuai dengan preferensi pengguna.
 
 
 
