@@ -9,6 +9,7 @@ Di sisi lain, banyaknya pilihan buku di pasaran membuat konsumen menghadapi **ta
 ### Pentingnya Proyek Ini
 Menyediakan sistem rekomendasi buku yang tepat sasaran dapat meningkatkan pengalaman membaca pengguna, mendorong loyalitas konsumen terhadap platform distribusi buku, dan meningkatkan angka penjualan. Selain itu, sistem rekomendasi juga menjadi salah satu strategi penting dalam menghadapi persaingan ketat di industri buku yang semakin terdigitalisasi.
 
+---
 ## Business Understanding
 ### Problem Statements
 Dalam industri buku yang sangat kompetitif dengan ribuan judul baru diterbitkan setiap tahunnya, pengguna seringkali mengalami kesulitan dalam menemukan buku yang sesuai dengan preferensi dan minat pribadi mereka. Banyaknya pilihan yang tersedia menyebabkan pengguna merasa kewalahan, sehingga membutuhkan bantuan sistem untuk mempersempit pilihan dan menemukan buku yang relevan. Tanpa sistem rekomendasi yang efektif, pengalaman pengguna dapat menurun dan berpotensi mengurangi tingkat pembelian atau keterlibatan pengguna.
@@ -45,17 +46,25 @@ Kekurangan:
 
 ## Data Understanding
 ### Informasi Data
+Dataset yang digunakan dalam proyek ini adalah Book Recommendation Dataset yang tersedia secara publik di Kaggle. Dataset ini berisi informasi terkait rating buku yang diberikan oleh pengguna, serta detail buku itu sendiri, seperti judul dan penulis. Dataset ini bertujuan untuk mendukung pembangunan sistem rekomendasi berbasis perilaku pengguna dan karakteristik buku.
+
+Dataset ini dapat diunduh melalui tautan berikut:
+[Kaggle - Book Recommendation Dataset](https://www.kaggle.com/datasets/arashnic/book-recommendation-dataset)
 
 ### Jumlah dan Kondisi Data
+Dataset terdiri dari tiga file utama:
+- Books.csv — Berisi informasi tentang buku.
+- Users.csv — Berisi informasi tentang pengguna.
+- Ratings.csv — Berisi informasi tentang rating yang diberikan oleh pengguna terhadap buku.
+
+Secara umum, kondisi dataset adalah sebagai berikut:
 - `Books.csv` ➔ berisi 271.360 ISBN dan 242.135 judul buku.
 - `Ratings.csv` ➔ berisi 1.149.780 data rating.
 - `Users.csv` ➔ berisi 278.858 pengguna.
-- Dataset diambil dari Kaggle: [Kaggle Book Recommendation Dataset](https://www.kaggle.com/datasets/arashnic/book-recommendation-dataset)
+
   
 ### Variabel dalam Dataset 
 Dataset ini berisi informasi tentang buku, pengguna, dan rating yang diberikan oleh pengguna terhadap buku. Dataset terdiri dari tiga file utama:
-
----
 
 #### `Books.csv`
 
@@ -102,62 +111,89 @@ Berisi data rating yang diberikan pengguna terhadap buku.
 - Ditemukan missing value di `Users.csv` dan `Books.csv`.
 - Tidak semua ISBN di `Ratings.csv` ditemukan di `Books.csv`, perlu data cleaning.
 - Buku yang diberi rating >0 hanya sebagian kecil dari total ISBN yang ada.
+- Usia pengguna dalam dataset berkisar dari anak-anak hingga lansia, namun terdapat beberapa anomali usia seperti 0 tahun atau lebih dari 100 tahun.
 
+---
 ## Data Preparation
-**Teknik Data Preparation yang Diterapkan:**
-- Menghapus missing value di `Users` dan `Books`.
-- Merge `Ratings` dengan `Books` berdasarkan `ISBN`.
-- Membatasi data ke 10.000 entri untuk efisiensi pelatihan model.
-- Encoding `User-ID` dan `ISBN` ke dalam ID numerik menggunakan `map`.
-- Normalisasi rating ke skala 0–1 untuk keperluan training neural network.
+Data preparation adalah tahapan penting dalam analisis data, yang bertujuan untuk mempersiapkan dataset agar dapat digunakan dalam model analitik yang lebih lanjut. Dalam tahapan ini, dilakukan beberapa proses, seperti pembersihan data (data cleaning), transformasi data (data transformation), dan penyusunan data ke dalam format yang sesuai.
 
-**Mengapa Tahapan Ini Diperlukan:**
-- Memastikan data bebas dari missing value agar model tidak error.
-- Encoding numerik diperlukan karena embedding layer di TensorFlow hanya menerima input integer.
-- Normalisasi rating membantu model convergen lebih cepat dan stabil.
+#### Pembersihan Data
+Pembersihan data bertujuan untuk mengidentifikasi dan menangani masalah-masalah yang ada dalam dataset, seperti data duplikat, nilai yang hilang, atau inkonsistensi lainnya yang dapat mempengaruhi analisis. 
 
----
-**Sistem Rekomendasi yang Dibuat:**
-1. **Content-Based Filtering:**
-   - Menggunakan TF-IDF pada kolom `Book-Title`.
-   - Menghitung Cosine Similarity antar buku.
-   - Memberikan rekomendasi buku dengan judul yang paling mirip.
+#### Merged Data
+Langkah ini menggabungkan beberapa sumber data yang relevan menjadi satu dataset yang lebih komprehensif. Penggabungan data ini dilakukan agar informasi yang lebih lengkap dapat dianalisis dalam satu waktu.
 
-2. **Collaborative Filtering:**
-   - Membuat model `RecommenderNet` menggunakan TensorFlow.
-   - Menggunakan embedding user dan ISBN, lalu menghitung dot product.
-   - Loss function: Binary Crossentropy.
-   - Optimizer: Adam.
+#### Data Transformation
+Transformasi data melibatkan konversi atau perubahan data ke dalam bentuk yang lebih mudah untuk diproses. Dalam hal ini, data yang ada dalam format series diubah menjadi format yang lebih berguna, yaitu list, untuk memudahkan analisis lebih lanjut dan integrasi dengan model rekomendasi.
 
-**Top-N Recommendation:**
-- Menampilkan **5 buku dengan rating tertinggi** yang pernah dirating user.
-- Menampilkan **Top 10 buku rekomendasi baru** untuk user berdasarkan prediksi skor tertinggi.
+#### Proses Data Preparation yang Dilakukan
+##### Penanganan Missing Values
+Missing values atau nilai yang hilang dalam dataset dapat mempengaruhi hasil analisis dan kualitas model. Salah satu teknik yang umum digunakan untuk mengatasi missing values adalah imputasi, yaitu mengganti nilai yang hilang dengan nilai yang relevan berdasarkan distribusi data, seperti menggunakan rata-rata, median, atau mode.
+> Implementasi: Pada analisis ini, dilakukan penanganan missing values pada dataset 'Age'. Hal ini telah dipastikan melalui pemeriksaan menggunakan fungsi 'isnull().sum()' yang kemudian untuk menanganinya digunakan fungsi 'users.dropna(inplace=True)'.
 
-**Kelebihan dan Kekurangan Pendekatan:**
+##### Merged Data
+Langkah ini menggabungkan beberapa sumber data yang relevan menjadi satu dataset yang lebih komprehensif. 
+> Dataset yang digunakan melibatkan beberapa tabel terpisah yang perlu digabungkan untuk membentuk satu dataset utuh. Data ratings, books, dan users digabungkan berdasarkan kolom-kolom yang relevan, seperti ISBN dan UserID, untuk memastikan bahwa informasi tentang rating buku dan data buku tersebut tersedia dalam satu dataset.
+> Implementasi: merged = pd.merge(ratings, books, on='ISBN', how='inner')
 
-| Pendekatan | Kelebihan | Kekurangan |
-|:--|:--|:--|
-| Content-Based Filtering | Tidak butuh banyak data pengguna lain, cepat saat inference | Cenderung rekomendasi buku yang mirip-mirip saja |
-| Collaborative Filtering | Mampu menangkap pola preferensi pengguna secara kompleks | Butuh cukup banyak data historis pengguna, rentan cold-start |
+#####  Data Transformation
+Transformasi data melibatkan konversi atau perubahan data ke dalam bentuk yang lebih mudah untuk diproses. Dalam hal ini, data yang ada dalam format series diubah menjadi format yang lebih berguna, yaitu list, untuk memudahkan analisis lebih lanjut dan integrasi dengan model rekomendasi.
+> Implementasi: Mengonversi Data menjadi List: Kolom ISBN, Book-Title, dan Book-Rating yang sebelumnya berbentuk series diubah menjadi list. Hal ini dilakukan untuk mempermudah proses analisis dan integrasi data ke dalam model rekomendasi berbasis konten atau collaborative filtering.
+> rating = preparation['Book-Rating'].tolist()
+> books_name = preparation['Book-Title'].tolist()
+> books_isbn = preparation['ISBN'].tolist()
 
 ---
 
-## 🔯 Evaluation
+## Modeling and Result
+Pada tahap ini, sistem rekomendasi dibangun untuk memberikan rekomendasi buku berdasarkan data rating yang telah disiapkan. Tujuan utama dari modeling adalah untuk mengidentifikasi buku-buku yang relevan bagi pengguna berdasarkan perilaku mereka sebelumnya atau preferensi yang ada dalam dataset. Sistem rekomendasi dapat mengandalkan berbagai algoritma, dan di sini kita akan menjelaskan dua algoritma yang berbeda: Collaborative Filtering dan Content-Based Filtering.
 
-**Metrik Evaluasi yang Digunakan:**
-- **Root Mean Squared Error (RMSE)**
+#### Content Based Filtering
+Pada tahap ini, saya membangun sistem rekomendasi menggunakan Content-Based Filtering yang berfokus pada kesamaan antara buku-buku berdasarkan judulnya. Berikut adalah langkah-langkah yang telah dilakukan untuk membangun sistem rekomendasi buku dengan menggunakan teknik ini.
 
-**Formula RMSE:**
-\[
-\text{RMSE} = \sqrt{\frac{1}{n} \sum_{i=1}^{n}(y_i - \hat{y}_i)^2}
-\]
+##### Mengambil 10.000 Baris Pertama dari Data
+Untuk mengurangi ukuran dataset yang besar dan mempercepat proses, hanya diambil 10.000 baris pertama dari data yang sudah disiapkan.
+> data_cut = data_new.head(10000)
 
-**Penjelasan RMSE:**
-- RMSE mengukur rata-rata deviasi kuadrat antara prediksi dan nilai aktual.
-- Semakin kecil nilai RMSE, semakin baik prediksi model.
+#### Konversi Kolom Judul Buku ke dalam Bentuk List
+Langkah ini mengubah kolom 'Book-Title' yang berisi judul buku menjadi sebuah list agar mudah diproses lebih lanjut dalam teknik TF-IDF.
+> books_title_list = data_cut['Book-Title'].tolist()
 
-**Hasil Proyek Berdasarkan RMSE:**
-- RMSE pada data training dan validation stabil setelah 100 epoch.
-- Gap antara RMSE training dan validation kecil, menunjukkan model tidak overfitting.
+####  Inisialisasi TF-IDF Vectorizer
+Di sini, saya menggunakan TF-IDF Vectorizer untuk mengubah teks judul buku menjadi representasi numerik yang dapat diproses oleh model. TF-IDF adalah teknik yang mengukur seberapa penting sebuah kata dalam suatu dokumen relatif terhadap seluruh koleksi dokumen (corpus). Kata-kata yang sering muncul dalam satu dokumen tetapi jarang muncul dalam dokumen lainnya akan memiliki bobot tinggi, sementara kata-kata yang umum akan memiliki bobot rendah.
+> tfidf = TfidfVectorizer(stop_words='english')
+> Catatan: Di sini saya juga menghilangkan kata-kata umum (stop words) seperti "the", "is", dan "a" yang tidak berkontribusi banyak pada analisis.
+
+#### Menghitung Kemiripan Antar Judul Buku (Cosine Similarity)
+Kemudian, saya menghitung cosine similarity antara semua judul buku. Cosine similarity adalah ukuran seberapa mirip dua vektor berdasarkan sudut antara mereka. Nilai cosine similarity berkisar antara 0 (tidak mirip sama sekali) hingga 1 (identik). Pada tahapan ini, dihitung cosine similarity pada dataframe tfidf_matrix yang diperoleh pada tahapan TD-IDF Vectorizer sebelumnya. Proses ini menghasilkan output berupa matriks kesamaan dalam bentuk array.
+> cosine_sim_matrix = cosine_similarity(tfidf_matrix)
+
+#### Menyajikan Top-N Recommendation
+Langkah selanjutnya adalah membuat sebuah fungsi untuk memberi hasil rekomendasi berdasarkan ISBN yang diberikan. Fungsi ini akan menggunakan cosine similarity yang telah dihitung pada langkah sebelumnya untuk menentukan buku-buku yang paling mirip.
+
+Cara Kerja:
+- Mengambil Data dengan argpartition(): Fungsi pertama-tama menggunakan argpartition() untuk mengambil index dengan nilai kemiripan tertinggi.
+- Mengubah Dataframe Menjadi Numpy: Data kemudian diubah menjadi format numpy untuk memudahkan pengolahan.
+- Membuat Range: Fungsi ini akan membuat rentang (range(start, stop, step)) untuk memilih buku-buku dengan kemiripan terbesar.
+- Menghapus ISBN Pengguna: Setelah itu, ISBN buku yang dimasukkan oleh pengguna akan dihapus menggunakan fungsi drop(), agar buku tersebut tidak muncul dalam daftar rekomendasi.
+- Mengembalikan Data dalam Bentuk DataFrame: Hasilnya akan dikembalikan dalam bentuk DataFrame yang berisi rekomendasi buku yang mirip.
+
+Berikut hasil rekomendasi dari buku dengan ISBN '0449143600':
+| ISBN        | Book-Title     | Book-Rating |
+|-------------|----------------|-------------|
+| 0449143600  | Love by Fire    | 0           |
 
 ---
+
+5 Rekomendasi buku berdasarkan ISBN '0449143600':
+| No | ISBN        | Book-Title                     | Book-Rating |
+|----|-------------|---------------------------------|-------------|
+| 1  | 0843928395  | All I Could Do Was Love You     | 9           |
+| 2  | 0375409440  | Love                            | 8           |
+| 3  | 0373025823  | Perhaps Love                    | 0           |
+| 4  | 0440147247  | In the Name of Love              | 0           |
+| 5  | 0553275283  | Love Story                      | 8           |
+
+
+
+
