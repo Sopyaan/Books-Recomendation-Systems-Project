@@ -255,9 +255,7 @@ RMSE mengukur seberapa besar perbedaan antara rating yang diprediksi oleh model 
 
 Formula:
 
-\[
-RMSE = \sqrt{ \frac{1}{n} \sum_{i=1}^{n} (y_{pred} - y_{true})^2 }
-\]
+![Formula RMSE](https://images.app.goo.gl/NS7b8BC1VcCi6bTdA)
 
 
 > Di mana:  
