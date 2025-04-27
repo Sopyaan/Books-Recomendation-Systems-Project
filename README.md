@@ -1,18 +1,13 @@
 # Books Recomendation Systems Project
 
-## Domain Proyek
+## Project Overview
 ### Latar belakang
-Di era informasi modern, jumlah buku yang diterbitkan setiap tahun sangat besar, sehingga pengguna kesulitan memilih buku yang sesuai dengan minat mereka. Dalam konteks ini, sistem rekomendasi berperan penting untuk membantu pengguna menemukan buku yang relevan dengan preferensi mereka. Berdasarkan riset dari *Goodreads* dan *Statista*, lebih dari 500.000 buku diterbitkan setiap tahun hanya di Amerika Serikat, yang memperkuat pentingnya pengembangan sistem rekomendasi.
+Industri buku di Amerika Serikat telah menghadapi berbagai tantangan, mulai dari meningkatnya popularitas media digital hingga kesulitan yang dialami toko buku fisik. Namun, data menunjukkan bahwa buku tetap menjadi bagian penting dalam kehidupan sehari-hari konsumen. Menurut Statista, angka penjualan buku cetak bahkan mengalami perbaikan dan kini secara konsisten melampaui 700 juta unit per tahun. Selain itu, format buku cetak tetap menjadi yang paling populer di antara konsumen AS, dengan 65 persen orang dewasa melaporkan telah membaca buku cetak dalam dua belas bulan terakhir [Statista, 2024](https://www.statista.com/topics/1177/book-market/#topicOverview).
 
-**Mengapa Proyek Ini Penting:**
+Di sisi lain, banyaknya pilihan buku di pasaran membuat konsumen menghadapi **tantangan dalam menemukan buku yang sesuai dengan preferensi mereka**. Sistem rekomendasi hadir sebagai solusi untuk mempersempit pilihan dan membantu pengguna menemukan buku yang paling menarik bagi mereka. Selain itu, sistem ini juga memungkinkan pengguna menemukan konten baru yang mungkin tidak mereka temukan secara mandiri [Intel, 2024](https://www.intel.co.id/content/www/id/id/learn/recommendation-systems.html#:~:text=Sistem%20rekomendasi%20membantu%20pengguna%20mempersempit,bisa%20saja%20tidak%20mereka%20temukan)
 
-- Meningkatkan pengalaman pengguna dalam menemukan buku baru.
-- Meningkatkan keterlibatan pengguna di platform buku digital.
-- Meningkatkan potensi transaksi pembelian atau konsumsi buku.
-
-**Referensi:**
-- [Goodreads Publishing Statistics](https://www.goodreads.com/)
-- [Statista Book Publishing Report](https://www.statista.com/topics/1177/book-market/)
+### Pentingnya Proyek Ini
+Menyediakan sistem rekomendasi buku yang tepat sasaran dapat meningkatkan pengalaman membaca pengguna, mendorong loyalitas konsumen terhadap platform distribusi buku, dan meningkatkan angka penjualan. Selain itu, sistem rekomendasi juga menjadi salah satu strategi penting dalam menghadapi persaingan ketat di industri buku yang semakin terdigitalisasi.
 
 ## Business Understanding
 ### Problem Statements
