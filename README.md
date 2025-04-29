@@ -18,7 +18,6 @@ Dalam industri buku yang sangat kompetitif dengan ribuan judul baru diterbitkan 
 - Mengembangkan dua pendekatan sistem rekomendasi, yaitu **Content-Based Filtering** dan **Collaborative Filtering**.
 - Membantu pengguna menemukan buku baru yang mungkin belum pernah mereka ketahui.
 - Meningkatkan akurasi prediksi rating dan relevansi rekomendasi.
-- Meningkatkan potensi penjualan atau keterlibatan pengguna dengan platform buku.
   
 ### Solution Statements
 Untuk mencapai tujuan di atas, proyek ini mengusulkan dua pendekatan sistem rekomendasi:
@@ -53,14 +52,13 @@ Dataset ini dapat diunduh melalui tautan berikut:
 
 ### Jumlah dan Kondisi Data
 Dataset terdiri dari tiga file utama:
-- Books.csv — Berisi informasi tentang buku.
-- Users.csv — Berisi informasi tentang pengguna.
-- Ratings.csv — Berisi informasi tentang rating yang diberikan oleh pengguna terhadap buku.
+- Books.csv — 271,379 baris, 8 kolom
+- Users.csv — 278,858 baris, 3 kolom
+- Ratings.csv — 1,149,780 baris, 3 kolom
 
 Secara umum, kondisi dataset adalah sebagai berikut:
-- `Books.csv` ➔ berisi 271.360 ISBN dan 242.135 judul buku.
-- `Ratings.csv` ➔ berisi 1.149.780 data rating.
-- `Users.csv` ➔ berisi 278.858 pengguna.
+- Missing values: Kolom Book-Author, Publisher, dan Image-URL memiliki missing values.
+- Duplicate: beberapa duplikat pada data rating dibersihkan.
 
   
 ### Variabel dalam Dataset 
