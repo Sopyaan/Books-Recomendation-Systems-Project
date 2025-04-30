@@ -148,19 +148,31 @@ Tahap ini bertujuan membangun struktur data yang memudahkan proses pencocokan da
 
 #### Ekstraksi Fitur TF-IDF
 Ekstraksi fitur dengan TF-IDF (Term Frequency-Inverse Document Frequency) adalah metode pemrosesan data yang dilakukan untuk mengukur pentingnya sebuah kata dalam sebuah dokumen relatif terhadap kumpulan dokumen lainnya. Hal ini dilakukan untuk merepresentasikan deskripsi buku dalam bentuk numerik agar dapat dihitung kemiripannya.
+> Implementasi: tf = TfidfVectorizer()
+> tfidf_matrix = tf.fit_transform(books['Book-Title'] + ' ' + books['Book-Author'])
+
 
 #### Cosine Similarity
 Cosine similarity digunakan untuk mengukur kesamaan antara dua vektor dan menentukan apakah kedua vektor tersebut menunjuk ke arah yang sama. Cosine similiarity digunakan untuk mengukur tingkat kemiripan antar buku berdasarkan hasil ekstraksi fitur TF-IDF.
+> Implementasi: similarity = cosine_similarity(tfidf_matrix)
 
 ### Collaborative Filltering Preparation
 #### Encode Label
-Digunakan untuk mengubah data kategorikal menjadi format numerik agar dapat diproses oleh model.
+Encoding dilakukan untuk mengubah data kategorikal seperti User-ID dan ISBN menjadi format numerik agar dapat diproses oleh algoritma machine learning, khususnya dalam sistem rekomendasi berbasis collaborative filtering.
+> Implementasi: Ekstraksi nilai unik Pertama, nilai unik dari User-ID dan ISBN diambil menggunakan fungsi unique() dan diubah menjadi list menggunakan tolist().
 #### Feature Mapping
-Tahap dilakukan agar data siap digunakan untuk pemodelan.
+Tahapan ini memastikan setiap nilai ID dari pengguna dan buku telah dipetakan ke integer, sehingga bisa digunakan dalam model embedding pada collaborative filtering berbasis neural network.
+> Implementasi: df['user'] = df['User-ID'].map(user_to_user_encoded)
+df['books'] = df['ISBN'].map(isbn_to_isbn_encoded)
+
 #### Normalisasi rating 0-1
 Bertujuan untuk menyamakan skala rating agar model dapat belajar secara optimal.
+> Implementasi: min_rating = df['Book-Rating'].min()
+max_rating = df['Book-Rating'].max()
+
 #### Split Data Training and Validation
-Digunakan untuk membagi data menjadi data pelatihan dan data validasi. 
+Dataset dibagi menjadi data latih dan validasi agar model dapat dievaluasi secara objektif dan tidak overfitting (80% train dan 20% test)
+> Implementasi: train_data, val_data = train_test_split(df, test_size=0.2, random_state=42)
 
 ---
 
