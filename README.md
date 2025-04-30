@@ -116,23 +116,39 @@ Berisi data rating yang diberikan pengguna terhadap buku.
 Data preparation adalah tahapan penting dalam analisis data, yang bertujuan untuk mempersiapkan dataset agar dapat digunakan dalam model analitik yang lebih lanjut. Dalam tahapan ini, dilakukan beberapa proses, seperti pembersihan data (data cleaning), transformasi data (data transformation), dan penyusunan data ke dalam format yang sesuai.
 
 ### Pembersihan Data
-Pembersihan data bertujuan untuk mengidentifikasi dan menangani masalah-masalah yang ada dalam dataset, seperti data duplikat, nilai yang hilang, atau inkonsistensi lainnya yang dapat mempengaruhi analisis. 
+Pembersihan data bertujuan untuk mengidentifikasi dan menangani masalah-masalah yang ada dalam dataset, seperti data duplikat, nilai yang hilang, atau inkonsistensi lainnya yang dapat mempengaruhi analisis. Missing values atau nilai yang hilang dalam dataset dapat mempengaruhi hasil analisis dan kualitas model. Salah satu teknik yang umum digunakan untuk mengatasi missing values adalah imputasi, yaitu mengganti nilai yang hilang dengan nilai yang relevan berdasarkan distribusi data, seperti menggunakan rata-rata, median, atau mode.
+> Implementasi: Pada analisis ini, dilakukan penanganan missing values pada dataset 'Age'. Hal ini telah dipastikan melalui pemeriksaan menggunakan fungsi 'isnull().sum()' yang kemudian untuk menanganinya digunakan fungsi 'users.dropna(inplace=True)'.
 
 ### Merged Data
-Langkah ini menggabungkan beberapa sumber data yang relevan menjadi satu dataset yang lebih komprehensif. Penggabungan data ini dilakukan agar informasi yang lebih lengkap dapat dianalisis dalam satu waktu.
+Langkah ini menggabungkan beberapa sumber data yang relevan menjadi satu dataset yang lebih komprehensif. Penggabungan data ini dilakukan agar informasi yang lebih lengkap dapat dianalisis dalam satu waktu. 
+> Dataset yang digunakan melibatkan beberapa tabel terpisah yang perlu digabungkan untuk membentuk satu dataset utuh. Data ratings, books, dan users digabungkan berdasarkan kolom-kolom yang relevan, seperti ISBN dan UserID, untuk memastikan bahwa informasi tentang rating buku dan data buku tersebut tersedia dalam satu dataset.
+> Implementasi: merged = pd.merge(ratings, books, on='ISBN', how='inner')
 
 ### Data Transformation
-Transformasi data melibatkan konversi atau perubahan data ke dalam bentuk yang lebih mudah untuk diproses. Dalam hal ini, data yang ada dalam format series diubah menjadi format yang lebih berguna, yaitu list, untuk memudahkan analisis lebih lanjut dan integrasi dengan model rekomendasi.
+Transformasi data melibatkan konversi atau perubahan data ke dalam bentuk yang lebih mudah untuk diproses. Dalam hal ini, data yang ada dalam format series diubah menjadi format yang lebih berguna, yaitu list, untuk memudahkan analisis lebih lanjut dan integrasi dengan model rekomendasi.  Dalam hal ini, data yang ada dalam format series diubah menjadi format yang lebih berguna, yaitu list, untuk memudahkan analisis lebih lanjut dan integrasi dengan model rekomendasi.
+> Implementasi: Mengonversi Data menjadi List: Kolom ISBN, Book-Title, dan Book-Rating yang sebelumnya berbentuk series diubah menjadi list. Hal ini dilakukan untuk mempermudah proses analisis dan integrasi data ke dalam model rekomendasi berbasis konten atau collaborative filtering.
+> rating = preparation['Book-Rating'].tolist()
+> books_name = preparation['Book-Title'].tolist()
+> books_isbn = preparation['ISBN'].tolist()
+
+---
 
 ### Content Based Filtering Preparation
 #### Cutting Dataset
-Tahap ini dilakukan untuk menyederhanakan data agar hanya mencakup informasi yang relevan sebelum proses pemodelan.
+Tahap ini dilakukan untuk menyederhanakan data agar hanya mencakup informasi yang relevan sebelum proses pemodelan. Pemangkasan dataset dilakukan untuk menyederhanakan data dan hanya menyertakan informasi yang relevan dengan proses pemodelan. Hal ini membantu mempercepat pemrosesan dan mengurangi noise.
+> Implementasi: Pada proyek kali ini hanya menggunakan 10.000 baris data saja karena keterbatasan komputasi.
+
 #### Data Conversion
-Digunakan untuk mengubah data mentah menjadi format teks yang siap diproses oleh algoritma berbasis konten.
+Digunakan untuk mengubah data mentah menjadi format teks yang siap diproses oleh algoritma berbasis konten. Konversi data diperlukan agar format teks dari fitur seperti judul dan penulis dapat digabungkan dan diproses oleh model berbasis teks.
+> Implementasi: Proses ini menggunakan fungsi tolist() untuk memenuhi persyaratan input TF-IDF Vectorizer yaitu input list.
+
 #### Membuat Dictionary
 Tahap ini bertujuan membangun struktur data yang memudahkan proses pencocokan dan rekomendasi buku.
+> Implementasi: Proses ini menghasilkan sebuah data baru hasil keseluruhan proses sebelumnya. Data disimpan pada variable books_new.
+
 #### Ekstraksi Fitur TF-IDF
 Ekstraksi fitur dengan TF-IDF (Term Frequency-Inverse Document Frequency) adalah metode pemrosesan data yang dilakukan untuk mengukur pentingnya sebuah kata dalam sebuah dokumen relatif terhadap kumpulan dokumen lainnya. Hal ini dilakukan untuk merepresentasikan deskripsi buku dalam bentuk numerik agar dapat dihitung kemiripannya.
+
 #### Cosine Similarity
 Cosine similarity digunakan untuk mengukur kesamaan antara dua vektor dan menentukan apakah kedua vektor tersebut menunjuk ke arah yang sama. Cosine similiarity digunakan untuk mengukur tingkat kemiripan antar buku berdasarkan hasil ekstraksi fitur TF-IDF.
 
@@ -145,40 +161,6 @@ Tahap dilakukan agar data siap digunakan untuk pemodelan.
 Bertujuan untuk menyamakan skala rating agar model dapat belajar secara optimal.
 #### Split Data Training and Validation
 Digunakan untuk membagi data menjadi data pelatihan dan data validasi. 
-
-### Proses Data Preparation yang Dilakukan
-#### Penanganan Missing Values
-Missing values atau nilai yang hilang dalam dataset dapat mempengaruhi hasil analisis dan kualitas model. Salah satu teknik yang umum digunakan untuk mengatasi missing values adalah imputasi, yaitu mengganti nilai yang hilang dengan nilai yang relevan berdasarkan distribusi data, seperti menggunakan rata-rata, median, atau mode.
-> Implementasi: Pada analisis ini, dilakukan penanganan missing values pada dataset 'Age'. Hal ini telah dipastikan melalui pemeriksaan menggunakan fungsi 'isnull().sum()' yang kemudian untuk menanganinya digunakan fungsi 'users.dropna(inplace=True)'.
-
-#### Merged Data
-Langkah ini menggabungkan beberapa sumber data yang relevan menjadi satu dataset yang lebih komprehensif. 
-> Dataset yang digunakan melibatkan beberapa tabel terpisah yang perlu digabungkan untuk membentuk satu dataset utuh. Data ratings, books, dan users digabungkan berdasarkan kolom-kolom yang relevan, seperti ISBN dan UserID, untuk memastikan bahwa informasi tentang rating buku dan data buku tersebut tersedia dalam satu dataset.
-> Implementasi: merged = pd.merge(ratings, books, on='ISBN', how='inner')
-
-#### Data Transformation
-Transformasi data melibatkan konversi atau perubahan data ke dalam bentuk yang lebih mudah untuk diproses. Dalam hal ini, data yang ada dalam format series diubah menjadi format yang lebih berguna, yaitu list, untuk memudahkan analisis lebih lanjut dan integrasi dengan model rekomendasi.
-> Implementasi: Mengonversi Data menjadi List: Kolom ISBN, Book-Title, dan Book-Rating yang sebelumnya berbentuk series diubah menjadi list. Hal ini dilakukan untuk mempermudah proses analisis dan integrasi data ke dalam model rekomendasi berbasis konten atau collaborative filtering.
-> rating = preparation['Book-Rating'].tolist()
-> books_name = preparation['Book-Title'].tolist()
-> books_isbn = preparation['ISBN'].tolist()
----
-
-### Proses Data Preparation yang Dilakukan pada Content Based Filtering
-#### Cutting Dataset
-Pemangkasan dataset dilakukan untuk menyederhanakan data dan hanya menyertakan informasi yang relevan dengan proses pemodelan. Hal ini membantu mempercepat pemrosesan dan mengurangi noise.
-> Implementasi: Pada proyek kali ini hanya menggunakan 10.000 baris data saja karena keterbatasan komputasi.
-
-#### Data Conversion
-Konversi data diperlukan agar format teks dari fitur seperti judul dan penulis dapat digabungkan dan diproses oleh model berbasis teks.
-> Implementasi: Proses ini menggunakan fungsi tolist() untuk memenuhi persyaratan input TF-IDF Vectorizer yaitu input list.
-
-#### Membuat Dictionary
-> Implementasi: Proses ini menghasilkan sebuah data baru hasil keseluruhan proses sebelumnya. Data disimpan pada variable books_new.
-
-#### Ekstraksi Fitur TF-IDF
-TF-IDF digunakan untuk mengubah deskripsi teks buku menjadi representasi numerik yang bisa dihitung kemiripannya oleh model.
-### Proses Data Preparation yang Dilakukan pada Collaborative Filltering
 
 ---
 
