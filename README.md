@@ -180,34 +180,23 @@ Dataset dibagi menjadi data latih dan validasi agar model dapat dievaluasi secar
 Pada tahap ini, sistem rekomendasi dibangun untuk memberikan rekomendasi buku berdasarkan data rating yang telah disiapkan. Tujuan utama dari modeling adalah untuk mengidentifikasi buku-buku yang relevan bagi pengguna berdasarkan perilaku mereka sebelumnya atau preferensi yang ada dalam dataset. Sistem rekomendasi dapat mengandalkan berbagai algoritma, dan di sini kita akan menjelaskan dua algoritma yang berbeda: Collaborative Filtering dan Content-Based Filtering.
 
 ### Content Based Filtering
-Pada tahap ini, saya membangun sistem rekomendasi menggunakan Content-Based Filtering yang berfokus pada kesamaan antara buku-buku berdasarkan judulnya. Berikut adalah langkah-langkah yang telah dilakukan untuk membangun sistem rekomendasi buku dengan menggunakan teknik ini.
+Pendekatan Content-Based Filtering merekomendasikan item berdasarkan kesamaan kontennya. Dalam proyek ini, fitur yang digunakan adalah judul buku, dan model dibangun menggunakan teknik TF-IDF (Term Frequency–Inverse Document Frequency) serta Cosine Similarity.
 
-#### Mengambil 10.000 Baris Pertama dari Data
-Untuk mengurangi ukuran dataset yang besar dan mempercepat proses, hanya diambil 10.000 baris pertama dari data yang sudah disiapkan.
-> data_cut = data_new.head(10000)
+#### Representasi Judul Buku dengan TF-IDF
+Model memanfaatkan TfidfVectorizer dari Scikit-learn dengan parameter stop_words='english' untuk merepresentasikan judul buku dalam bentuk vektor numerik. TF-IDF memberikan bobot tinggi pada kata-kata yang unik dalam judul tertentu namun jarang muncul di judul lain, sehingga lebih mencerminkan karakteristik khas suatu buku.
 
-#### Konversi Kolom Judul Buku ke dalam Bentuk List
-Langkah ini mengubah kolom 'Book-Title' yang berisi judul buku menjadi sebuah list agar mudah diproses lebih lanjut dalam teknik TF-IDF.
-> books_title_list = data_cut['Book-Title'].tolist()
-
-####  Inisialisasi TF-IDF Vectorizer
-Di sini, saya menggunakan TF-IDF Vectorizer untuk mengubah teks judul buku menjadi representasi numerik yang dapat diproses oleh model. TF-IDF adalah teknik yang mengukur seberapa penting sebuah kata dalam suatu dokumen relatif terhadap seluruh koleksi dokumen (corpus). Kata-kata yang sering muncul dalam satu dokumen tetapi jarang muncul dalam dokumen lainnya akan memiliki bobot tinggi, sementara kata-kata yang umum akan memiliki bobot rendah.
-> tfidf = TfidfVectorizer(stop_words='english')
-> Catatan: Di sini saya juga menghilangkan kata-kata umum (stop words) seperti "the", "is", dan "a" yang tidak berkontribusi banyak pada analisis.
-
-#### Menghitung Kemiripan Antar Judul Buku (Cosine Similarity)
-Kemudian, saya menghitung cosine similarity antara semua judul buku. Cosine similarity adalah ukuran seberapa mirip dua vektor berdasarkan sudut antara mereka. Nilai cosine similarity berkisar antara 0 (tidak mirip sama sekali) hingga 1 (identik). Pada tahapan ini, dihitung cosine similarity pada dataframe tfidf_matrix yang diperoleh pada tahapan TD-IDF Vectorizer sebelumnya. Proses ini menghasilkan output berupa matriks kesamaan dalam bentuk array.
-> cosine_sim_matrix = cosine_similarity(tfidf_matrix)
+#### Pengukuran Kemiripan dengan Cosine Similarity
+Setelah memperoleh vektor TF-IDF untuk seluruh judul buku, cosine similarity dihitung antar semua pasangan buku. Cosine similarity mengukur tingkat kemiripan antar dua vektor berdasarkan sudut di antara mereka, menghasilkan nilai antara 0 hingga 1, di mana nilai yang lebih tinggi menunjukkan tingkat kemiripan yang lebih besar.
 
 #### Menyajikan Top-N Recommendation
 Langkah selanjutnya adalah membuat sebuah fungsi untuk memberi hasil rekomendasi berdasarkan ISBN yang diberikan. Fungsi ini akan menggunakan cosine similarity yang telah dihitung pada langkah sebelumnya untuk menentukan buku-buku yang paling mirip.
 
-Cara Kerja:
-- Mengambil Data dengan argpartition(): Fungsi pertama-tama menggunakan argpartition() untuk mengambil index dengan nilai kemiripan tertinggi.
-- Mengubah Dataframe Menjadi Numpy: Data kemudian diubah menjadi format numpy untuk memudahkan pengolahan.
-- Membuat Range: Fungsi ini akan membuat rentang (range(start, stop, step)) untuk memilih buku-buku dengan kemiripan terbesar.
-- Menghapus ISBN Pengguna: Setelah itu, ISBN buku yang dimasukkan oleh pengguna akan dihapus menggunakan fungsi drop(), agar buku tersebut tidak muncul dalam daftar rekomendasi.
-- Mengembalikan Data dalam Bentuk DataFrame: Hasilnya akan dikembalikan dalam bentuk DataFrame yang berisi rekomendasi buku yang mirip.
+Sistem rekomendasi bekerja dengan langkah-langkah berikut:
+- Mengambil ISBN sebagai input.
+- Menemukan indeks vektor TF-IDF dari buku tersebut.
+- Mengambil skor kemiripan dari matriks cosine similarity terhadap seluruh buku lainnya.
+- Mengurutkan dan memilih buku dengan skor kemiripan tertinggi (selain buku itu sendiri).
+- Mengembalikan lima rekomendasi buku paling mirip berdasarkan judul.
 
 Berikut hasil rekomendasi dari buku dengan ISBN '0449143600':
 | ISBN        | Book-Title     | Book-Rating |
@@ -227,25 +216,20 @@ Berikut hasil rekomendasi dari buku dengan ISBN '0449143600':
 
 ---
 ### Collaborative Filtering
-Collaborative Filtering berbasis model neural network digunakan untuk membuat sistem rekomendasi buku. Proses ini melibatkan pengkodean ID pengguna dan ISBN, normalisasi rating, pembagian data ke dalam set pelatihan dan validasi, serta pelatihan model dengan menggunakan teknik deep learning.
+Pada pendekatan ini, sistem rekomendasi dikembangkan menggunakan model berbasis neural network yang dikenal sebagai RecommenderNet. Metode Collaborative Filtering bekerja dengan menganalisis interaksi historis pengguna dan item (dalam hal ini buku), tanpa memerlukan informasi konten buku. Model bertujuan untuk mempelajari pola preferensi pengguna dari data rating yang tersedia, guna memprediksi rating terhadap buku yang belum pernah dibaca.
 
-Model ini bekerja dengan mengidentifikasi buku yang mirip dan tidak pernah dibeli pengguna dengan pertimbangan rating yang telah diberikan sebelumnya. Model ini menjadi solusi dalam menghasilkan sistem rekomendasi yang efektif dan efisien karena mempertimbangkan preferensi pengguna dan hanya hitungan detik dalam memberikan rekomendasi. Adapun langkah-langkah yang dilakukan sebagai berikut:
+#### Arsitektur Model: RecommenderNet
+Model menggunakan embedding layers untuk merepresentasikan pengguna dan buku dalam ruang dimensi laten. Setiap embedding menangkap representasi numerik dari pengguna dan item berdasarkan interaksinya. Komponen utama model meliputi:
+- User embedding layer dan item embedding layer: Mengubah ID pengguna dan ISBN menjadi vektor berdimensi tetap.
+- Dot product antara embedding pengguna dan item: Memprediksi seberapa besar kemungkinan pengguna menyukai item tertentu.
+- Bias term: Ditambahkan untuk menangkap kecenderungan khusus pengguna atau item.
+- Activation & loss: Model menggunakan sigmoid activation di output layer dan dilatih dengan Binary Crossentropy loss, sementara performa evaluasi diukur menggunakan Root Mean Squared Error (RMSE).
 
-#### Encoding User dan ISBN
-> Saya membuat pemetaan antara ID pengguna (User-ID) dan ISBN buku (ISBN) menjadi ID yang lebih sederhana untuk digunakan dalam model neural network.
-
-#### Normalisasi Rating
-> Rating dinormalisasi ke skala antara 0 dan 1, agar lebih konsisten dalam prediksi.
-
-#### Pembagian Data untuk Pelatihan dan Validasi
-> Data dibagi menjadi set pelatihan (80%) dan set validasi (20%) untuk melatih dan menguji model.
-
-#### Model RecommenderNet
-> Model neural network (RecommenderNet) menggunakan Embedding layers untuk pengguna dan buku. Model ini memprediksi rating yang diberikan oleh pengguna untuk buku tertentu.
-
-#### Pelatihan Model
-> Model dilatih dengan menggunakan loss function BinaryCrossentropy dan metrik RootMeanSquaredError untuk menilai seberapa baik model dalam memprediksi rating.
-
+#### Strategi Pelatihan
+- Data pelatihan dan validasi dibagi secara proporsional (80:20).
+- Rating dinormalisasi ke rentang 0 hingga 1 untuk konsistensi prediksi.
+- Model dilatih selama beberapa epochs menggunakan algoritma optimasi seperti Adam optimizer.
+  
 #### Menyajikan Top-N Recommendation
 Setelah model selesai dilatih, model dapat memberikan rekomendasi buku berdasarkan prediksi rating yang diberikan oleh pengguna terhadap buku yang belum mereka beri rating. Berikut cara kerja dari proses ini:
 - Model memilih secara acak user_id dari dataset rating. Kemudian, model mengambil data buku yang sudah pernah dikunjungi oleh pengguna tersebut.
@@ -278,9 +262,28 @@ Top 10 Rekomendasi Buku untuk User 278148:
 
 ---
 ## Evaluation
-Evaluasi model recommender system bertujuan untuk mengukur seberapa baik model dalam memberikan rekomendasi yang relevan dan akurat sesuai dengan preferensi pengguna. Dalam proyek ini, evaluasi dilakukan menggunakan beberapa metrik yang relevan untuk konteks data dan tujuan model, yang berupa sistem rekomendasi buku.
+Evaluasi dalam sistem rekomendasi bertujuan untuk mengukur seberapa baik model dalam memberikan hasil yang relevan, akurat, dan sesuai dengan preferensi pengguna. Evaluasi dilakukan terhadap dua pendekatan yang digunakan, yaitu Content-Based Filtering (CBF) dan Collaborative Filtering berbasis neural network (RecommenderNet).
 
-### Metrik Evaluasi yang Digunakan
+### Evaluasi Model Content-Based Filtering (CBF)
+Untuk pendekatan CBF, metrik evaluasi difokuskan pada relevansi rekomendasi, bukan prediksi rating. Salah satu metrik yang digunakan adalah Precision@K.
+
+#### Precision@K
+Precision@K adalah metrik evaluasi yang mengukur seberapa banyak rekomendasi yang relevan di antara K rekomendasi teratas yang diberikan oleh model. Dalam hal ini, K adalah jumlah rekomendasi buku yang dihasilkan oleh sistem.
+
+Misalnya, jika kita menggunakan **Top-5 rekomendasi**, Precision@5 dihitung sebagai berikut:
+
+\[
+\text{Precision@5} = \frac{\text{Jumlah buku yang relevan di Top-5}}{5}
+\
+
+Berdasarkan hasil rekomendasi untuk buku dengan ISBN '0449143600' kita menentukan relevansi dengan Buku dengan rating ≥ 6 dianggap relevan, sehingga hasilnya yaitu:
+**Jumlah relevan = 3**. Maka, Precision@5 adalah:
+
+\[
+\text{Precision@5} = \frac{3}{5} = 0.6
+\]
+
+### Evaluasi Model Collaborative Filtering
 #### Root Mean Squared Error (RMSE)
 RMSE mengukur seberapa besar perbedaan antara rating yang diprediksi oleh model dan rating yang sebenarnya diberikan oleh pengguna. RMSE merupakan salah satu metrik utama untuk mengukur kesalahan prediksi model rekomendasi.
 
@@ -322,5 +325,13 @@ Pada hasil pelatihan model, kita memperoleh nilai berikut:
 
 Semakin kecil nilai RMSE dan loss, semakin baik model dalam memberikan rekomendasi yang akurat dan sesuai dengan preferensi pengguna.
 
+---
+### Hubungan dengan Business Understanding
+Model yang diuji dalam proyek ini telah berhasil memberikan solusi yang relevan dalam meningkatkan pengalaman pengguna dalam sistem rekomendasi buku. Dengan evaluasi menggunakan metrik precision dan RMSE, model ini terbukti dapat memberikan rekomendasi yang relevan dan akurat, yang pada gilirannya dapat meningkatkan kepuasan pengguna.
 
+- **Problem Statement**: Sistem rekomendasi harus memberikan buku yang relevan dan menarik bagi pengguna. Evaluasi model menunjukkan bahwa sistem ini berhasil dalam hal tersebut.
+- **Goals yang Diharapkan**: Model berhasil memenuhi tujuan untuk memberikan rekomendasi yang relevan berdasarkan preferensi pengguna, seperti yang tercermin dalam metrik evaluasi.
+- **Solusi yang Diterapkan**: Pendekatan berbasis Content-based Filtering dan evaluasi berbasis precision memberikan dampak yang positif, di mana sistem dapat merekomendasikan buku yang relevan dengan lebih akurat.
+
+Dengan hasil ini, model recommender yang dibangun dapat diterapkan secara efektif untuk meningkatkan pengalaman pengguna dan membantu mereka menemukan buku yang sesuai dengan preferensi mereka.
 
