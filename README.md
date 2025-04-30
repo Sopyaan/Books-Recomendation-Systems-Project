@@ -277,6 +277,7 @@ Misalnya, jika kita menggunakan **Top-5 rekomendasi**, Precision@5 dihitung seba
 \
 
 Berdasarkan hasil rekomendasi untuk buku dengan ISBN '0449143600' kita menentukan relevansi dengan Buku dengan rating ≥ 6 dianggap relevan, sehingga hasilnya yaitu:
+
 **Jumlah relevan = 3**. Maka, Precision@5 adalah:
 
 \[
