@@ -151,11 +151,6 @@ Ekstraksi fitur dengan TF-IDF (Term Frequency-Inverse Document Frequency) adalah
 > Implementasi: tf = TfidfVectorizer()
 > tfidf_matrix = tf.fit_transform(books['Book-Title'] + ' ' + books['Book-Author'])
 
-
-#### Cosine Similarity
-Cosine similarity digunakan untuk mengukur kesamaan antara dua vektor dan menentukan apakah kedua vektor tersebut menunjuk ke arah yang sama. Cosine similiarity digunakan untuk mengukur tingkat kemiripan antar buku berdasarkan hasil ekstraksi fitur TF-IDF.
-> Implementasi: similarity = cosine_similarity(tfidf_matrix)
-
 ### Collaborative Filltering Preparation
 #### Encode Label
 Encoding dilakukan untuk mengubah data kategorikal seperti User-ID dan ISBN menjadi format numerik agar dapat diproses oleh algoritma machine learning, khususnya dalam sistem rekomendasi berbasis collaborative filtering.
@@ -168,11 +163,17 @@ df['books'] = df['ISBN'].map(isbn_to_isbn_encoded)
 #### Normalisasi rating 0-1
 Bertujuan untuk menyamakan skala rating agar model dapat belajar secara optimal.
 > Implementasi: min_rating = df['Book-Rating'].min()
-max_rating = df['Book-Rating'].max()
+> max_rating = df['Book-Rating'].max()
 
 #### Split Data Training and Validation
 Dataset dibagi menjadi data latih dan validasi agar model dapat dievaluasi secara objektif dan tidak overfitting (80% train dan 20% test)
-> Implementasi: train_data, val_data = train_test_split(df, test_size=0.2, random_state=42)
+> Implementasi: train_indices = int(0.8 * df.shape[0])
+> x_train, x_val, y_train, y_val = (
+>    x[:train_indices],
+>    x[train_indices:],
+>    y[:train_indices],
+>    y[train_indices:]
+> )
 
 ---
 
