@@ -128,7 +128,9 @@ Langkah ini menggabungkan beberapa sumber data yang relevan menjadi satu dataset
 Transformasi data melibatkan konversi atau perubahan data ke dalam bentuk yang lebih mudah untuk diproses. Dalam hal ini, data yang ada dalam format series diubah menjadi format yang lebih berguna, yaitu list, untuk memudahkan analisis lebih lanjut dan integrasi dengan model rekomendasi.  Dalam hal ini, data yang ada dalam format series diubah menjadi format yang lebih berguna, yaitu list, untuk memudahkan analisis lebih lanjut dan integrasi dengan model rekomendasi.
 > Implementasi: Mengonversi Data menjadi List: Kolom ISBN, Book-Title, dan Book-Rating yang sebelumnya berbentuk series diubah menjadi list. Hal ini dilakukan untuk mempermudah proses analisis dan integrasi data ke dalam model rekomendasi berbasis konten atau collaborative filtering.
 > rating = preparation['Book-Rating'].tolist()
+
 > books_name = preparation['Book-Title'].tolist()
+
 > books_isbn = preparation['ISBN'].tolist()
 
 ---
@@ -149,6 +151,7 @@ Tahap ini bertujuan membangun struktur data yang memudahkan proses pencocokan da
 #### Ekstraksi Fitur TF-IDF
 Ekstraksi fitur dengan TF-IDF (Term Frequency-Inverse Document Frequency) adalah metode pemrosesan data yang dilakukan untuk mengukur pentingnya sebuah kata dalam sebuah dokumen relatif terhadap kumpulan dokumen lainnya. Hal ini dilakukan untuk merepresentasikan deskripsi buku dalam bentuk numerik agar dapat dihitung kemiripannya.
 > Implementasi: tf = TfidfVectorizer()
+
 > tfidf_matrix = tf.fit_transform(books['Book-Title'] + ' ' + books['Book-Author'])
 
 ### Collaborative Filltering Preparation
@@ -158,7 +161,8 @@ Encoding dilakukan untuk mengubah data kategorikal seperti User-ID dan ISBN menj
 #### Feature Mapping
 Tahapan ini memastikan setiap nilai ID dari pengguna dan buku telah dipetakan ke integer, sehingga bisa digunakan dalam model embedding pada collaborative filtering berbasis neural network.
 > Implementasi: df['user'] = df['User-ID'].map(user_to_user_encoded)
-df['books'] = df['ISBN'].map(isbn_to_isbn_encoded)
+
+> df['books'] = df['ISBN'].map(isbn_to_isbn_encoded)
 
 #### Normalisasi rating 0-1
 Bertujuan untuk menyamakan skala rating agar model dapat belajar secara optimal.
