@@ -163,16 +163,23 @@ df['books'] = df['ISBN'].map(isbn_to_isbn_encoded)
 #### Normalisasi rating 0-1
 Bertujuan untuk menyamakan skala rating agar model dapat belajar secara optimal.
 > Implementasi: min_rating = df['Book-Rating'].min()
+
 > max_rating = df['Book-Rating'].max()
 
 #### Split Data Training and Validation
 Dataset dibagi menjadi data latih dan validasi agar model dapat dievaluasi secara objektif dan tidak overfitting (80% train dan 20% test)
 > Implementasi: train_indices = int(0.8 * df.shape[0])
+
 > x_train, x_val, y_train, y_val = (
+
 >    x[:train_indices],
+
 >    x[train_indices:],
+
 >    y[:train_indices],
+
 >    y[train_indices:]
+
 > )
 
 ---
