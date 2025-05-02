@@ -116,17 +116,21 @@ Berisi data rating yang diberikan pengguna terhadap buku.
 Data preparation adalah tahapan penting dalam analisis data, yang bertujuan untuk mempersiapkan dataset agar dapat digunakan dalam model analitik yang lebih lanjut. Dalam tahapan ini, dilakukan beberapa proses, seperti pembersihan data (data cleaning), transformasi data (data transformation), dan penyusunan data ke dalam format yang sesuai.
 
 ### Pembersihan Data
-Pembersihan data bertujuan untuk mengidentifikasi dan menangani masalah-masalah yang ada dalam dataset, seperti data duplikat, nilai yang hilang, atau inkonsistensi lainnya yang dapat mempengaruhi analisis. Missing values atau nilai yang hilang dalam dataset dapat mempengaruhi hasil analisis dan kualitas model. Salah satu teknik yang umum digunakan untuk mengatasi missing values adalah imputasi, yaitu mengganti nilai yang hilang dengan nilai yang relevan berdasarkan distribusi data, seperti menggunakan rata-rata, median, atau mode.
-> Implementasi: Pada analisis ini, dilakukan penanganan missing values pada dataset 'Age'. Hal ini telah dipastikan melalui pemeriksaan menggunakan fungsi 'isnull().sum()' yang kemudian untuk menanganinya digunakan fungsi 'users.dropna(inplace=True)'.
+Pembersihan data bertujuan untuk mengidentifikasi dan menangani masalah-masalah yang ada dalam dataset, seperti data duplikat, nilai yang hilang, atau inkonsistensi lainnya yang dapat mempengaruhi analisis. Missing values atau nilai yang hilang dalam dataset dapat mempengaruhi hasil analisis dan kualitas model. Pada tahap pembersihan data, digunakan fungsi `dropna()` untuk menghapus baris dengan missing value. Keputusan ini diambil karena sebagian besar missing value berasal dari kolom non-kritis seperti URL gambar (`Image-URL-S`, `Image-URL-M`, dan `Image-URL-L`) serta informasi tambahan seperti nama penerbit atau tahun terbit, yang tidak digunakan langsung dalam proses pemodelan sistem rekomendasi. Oleh karena itu, menghapus baris-baris ini dinilai lebih efisien dibandingkan melakukan imputasi, tanpa mengorbankan kualitas rekomendasi.
+
+> Implementasi:
+> Pada analisis ini, dilakukan penanganan missing values pada dataset 'Age'. Hal ini telah dipastikan melalui pemeriksaan menggunakan fungsi 'isnull().sum()' yang kemudian untuk menanganinya digunakan fungsi 'users.dropna(inplace=True)'.
 
 ### Merged Data
 Langkah ini menggabungkan beberapa sumber data yang relevan menjadi satu dataset yang lebih komprehensif. Penggabungan data ini dilakukan agar informasi yang lebih lengkap dapat dianalisis dalam satu waktu. 
 > Dataset yang digunakan melibatkan beberapa tabel terpisah yang perlu digabungkan untuk membentuk satu dataset utuh. Data ratings, books, dan users digabungkan berdasarkan kolom-kolom yang relevan, seperti ISBN dan UserID, untuk memastikan bahwa informasi tentang rating buku dan data buku tersebut tersedia dalam satu dataset.
-> Implementasi: merged = pd.merge(ratings, books, on='ISBN', how='inner')
+> Implementasi:
+> merged = pd.merge(ratings, books, on='ISBN', how='inner')
 
 ### Data Transformation
 Transformasi data melibatkan konversi atau perubahan data ke dalam bentuk yang lebih mudah untuk diproses. Dalam hal ini, data yang ada dalam format series diubah menjadi format yang lebih berguna, yaitu list, untuk memudahkan analisis lebih lanjut dan integrasi dengan model rekomendasi.  Dalam hal ini, data yang ada dalam format series diubah menjadi format yang lebih berguna, yaitu list, untuk memudahkan analisis lebih lanjut dan integrasi dengan model rekomendasi.
 > Implementasi: Mengonversi Data menjadi List: Kolom ISBN, Book-Title, dan Book-Rating yang sebelumnya berbentuk series diubah menjadi list. Hal ini dilakukan untuk mempermudah proses analisis dan integrasi data ke dalam model rekomendasi berbasis konten atau collaborative filtering.
+
 > rating = preparation['Book-Rating'].tolist()
 
 > books_name = preparation['Book-Title'].tolist()
@@ -138,41 +142,57 @@ Transformasi data melibatkan konversi atau perubahan data ke dalam bentuk yang l
 ### Content Based Filtering Preparation
 #### Cutting Dataset
 Tahap ini dilakukan untuk menyederhanakan data agar hanya mencakup informasi yang relevan sebelum proses pemodelan. Pemangkasan dataset dilakukan untuk menyederhanakan data dan hanya menyertakan informasi yang relevan dengan proses pemodelan. Hal ini membantu mempercepat pemrosesan dan mengurangi noise.
-> Implementasi: Pada proyek kali ini hanya menggunakan 10.000 baris data saja karena keterbatasan komputasi.
+> Implementasi:
+
+> Pada proyek kali ini hanya menggunakan 10.000 baris data saja karena keterbatasan komputasi.
 
 #### Data Conversion
 Digunakan untuk mengubah data mentah menjadi format teks yang siap diproses oleh algoritma berbasis konten. Konversi data diperlukan agar format teks dari fitur seperti judul dan penulis dapat digabungkan dan diproses oleh model berbasis teks.
-> Implementasi: Proses ini menggunakan fungsi tolist() untuk memenuhi persyaratan input TF-IDF Vectorizer yaitu input list.
+> Implementasi:
+
+> Proses ini menggunakan fungsi tolist() untuk memenuhi persyaratan input TF-IDF Vectorizer yaitu input list.
 
 #### Membuat Dictionary
 Tahap ini bertujuan membangun struktur data yang memudahkan proses pencocokan dan rekomendasi buku.
-> Implementasi: Proses ini menghasilkan sebuah data baru hasil keseluruhan proses sebelumnya. Data disimpan pada variable books_new.
+> Implementasi:
+
+> Proses ini menghasilkan sebuah data baru hasil keseluruhan proses sebelumnya. Data disimpan pada variable books_new.
 
 #### Ekstraksi Fitur TF-IDF
 Ekstraksi fitur dengan TF-IDF (Term Frequency-Inverse Document Frequency) adalah metode pemrosesan data yang dilakukan untuk mengukur pentingnya sebuah kata dalam sebuah dokumen relatif terhadap kumpulan dokumen lainnya. Hal ini dilakukan untuk merepresentasikan deskripsi buku dalam bentuk numerik agar dapat dihitung kemiripannya.
-> Implementasi: tf = TfidfVectorizer()
+> Implementasi:
+
+> tf = TfidfVectorizer()
 
 > tfidf_matrix = tf.fit_transform(books['Book-Title'] + ' ' + books['Book-Author'])
 
 ### Collaborative Filltering Preparation
+### Merged Data
+
 #### Encode Label
 Encoding dilakukan untuk mengubah data kategorikal seperti User-ID dan ISBN menjadi format numerik agar dapat diproses oleh algoritma machine learning, khususnya dalam sistem rekomendasi berbasis collaborative filtering.
 > Implementasi: Ekstraksi nilai unik Pertama, nilai unik dari User-ID dan ISBN diambil menggunakan fungsi unique() dan diubah menjadi list menggunakan tolist().
 #### Feature Mapping
 Tahapan ini memastikan setiap nilai ID dari pengguna dan buku telah dipetakan ke integer, sehingga bisa digunakan dalam model embedding pada collaborative filtering berbasis neural network.
-> Implementasi: df['user'] = df['User-ID'].map(user_to_user_encoded)
+> Implementasi:
+
+> df['user'] = df['User-ID'].map(user_to_user_encoded)
 
 > df['books'] = df['ISBN'].map(isbn_to_isbn_encoded)
 
 #### Normalisasi rating 0-1
 Bertujuan untuk menyamakan skala rating agar model dapat belajar secara optimal.
-> Implementasi: min_rating = df['Book-Rating'].min()
+> Implementasi:
+
+> min_rating = df['Book-Rating'].min()
 
 > max_rating = df['Book-Rating'].max()
 
 #### Split Data Training and Validation
 Dataset dibagi menjadi data latih dan validasi agar model dapat dievaluasi secara objektif dan tidak overfitting (80% train dan 20% test)
-> Implementasi: train_indices = int(0.8 * df.shape[0])
+> Implementasi:
+
+> train_indices = int(0.8 * df.shape[0])
 
 > x_train, x_val, y_train, y_val = (
 
@@ -193,9 +213,6 @@ Pada tahap ini, sistem rekomendasi dibangun untuk memberikan rekomendasi buku be
 
 ### Content Based Filtering
 Pendekatan Content-Based Filtering merekomendasikan item berdasarkan kesamaan kontennya. Dalam proyek ini, fitur yang digunakan adalah judul buku, dan model dibangun menggunakan teknik TF-IDF (Term Frequency–Inverse Document Frequency) serta Cosine Similarity.
-
-#### Representasi Judul Buku dengan TF-IDF
-Model memanfaatkan TfidfVectorizer dari Scikit-learn dengan parameter stop_words='english' untuk merepresentasikan judul buku dalam bentuk vektor numerik. TF-IDF memberikan bobot tinggi pada kata-kata yang unik dalam judul tertentu namun jarang muncul di judul lain, sehingga lebih mencerminkan karakteristik khas suatu buku.
 
 #### Pengukuran Kemiripan dengan Cosine Similarity
 Setelah memperoleh vektor TF-IDF untuk seluruh judul buku, cosine similarity dihitung antar semua pasangan buku. Cosine similarity mengukur tingkat kemiripan antar dua vektor berdasarkan sudut di antara mereka, menghasilkan nilai antara 0 hingga 1, di mana nilai yang lebih tinggi menunjukkan tingkat kemiripan yang lebih besar.
@@ -284,17 +301,17 @@ Precision@K adalah metrik evaluasi yang mengukur seberapa banyak rekomendasi yan
 
 Misalnya, jika kita menggunakan **Top-5 rekomendasi**, Precision@5 dihitung sebagai berikut:
 
-\[
+$$
 \text{Precision@5} = \frac{\text{Jumlah buku yang relevan di Top-5}}{5}
-\
+$$
 
 Berdasarkan hasil rekomendasi untuk buku dengan ISBN '0449143600' kita menentukan relevansi dengan Buku dengan rating ≥ 6 dianggap relevan, sehingga hasilnya yaitu:
 
 **Jumlah relevan = 3**. Maka, Precision@5 adalah:
 
-\[
+$$
 \text{Precision@5} = \frac{3}{5} = 0.6
-\]
+$$
 
 ### Evaluasi Model Collaborative Filtering
 #### Root Mean Squared Error (RMSE)
